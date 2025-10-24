@@ -110,6 +110,20 @@
             padding: 20px;
             height: calc(100% - 160px);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 2px;
         }
 
         .home-grid {
@@ -264,17 +278,17 @@
         }
 
         .btn-back {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.3);
             color: white;
             padding: 10px 18px;
             border: none;
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
-            margin-bottom: 15px;
-            font-size: 0.95em;
+            font-size: 1.1em;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 10;
         }
 
         .btn-back:hover {
@@ -532,6 +546,20 @@
             padding: 18px;
             overflow-y: auto;
             background: #f9fafb;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 2px;
         }
 
         .message {
@@ -733,6 +761,20 @@
         .modal-list {
             max-height: 400px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-list::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 2px;
         }
 
         .modal-item {
@@ -855,12 +897,9 @@
                         <span>9:42</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="app-header" style="position: relative;">
-                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
-                        <div class="logo">
-                            <div class="hand-icon">🔄</div>
-                            <span>Translate</span>
-                        </div>
+                    <div class="app-header" style="padding: 20px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 15px; margin: 0; padding: 8px 16px;">←</button>
+                        <div style="font-size: 1.3em; font-weight: bold;">Translate</div>
                     </div>
                     <div class="content">
                         <div class="camera-view">
@@ -878,8 +917,8 @@
                                 <div class="confidence-fill"></div>
                             </div>
                             <div class="action-buttons">
-                                <button class="btn btn-primary" onclick="showScreen('avatar')">🔊 Speak</button>
-                                <button class="btn btn-secondary">📋 Copy</button>
+                                <button class="btn btn-primary" onclick="speakTranslation()">🔊 Speak</button>
+                                <button class="btn btn-secondary" onclick="copyTranslation()">📋 Copy</button>
                             </div>
                         </div>
                     </div>
@@ -891,12 +930,9 @@
                         <span>9:42</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="app-header" style="position: relative;">
-                        <button class="btn-back" onclick="showScreen('translate')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
-                        <div class="logo">
-                            <div class="hand-icon">🎭</div>
-                            <span>Avatar Reply</span>
-                        </div>
+                    <div class="app-header" style="padding: 20px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <button class="btn-back" onclick="showScreen('translate')" style="position: absolute; left: 15px; margin: 0; padding: 8px 16px;">←</button>
+                        <div style="font-size: 1.3em; font-weight: bold;">Avatar Reply</div>
                     </div>
                     <div class="content">
                         <div class="avatar-container">
@@ -911,9 +947,9 @@
                             <div class="translation-bangla">"আমি কিভাবে আপনাকে সাহায্য করতে পারি?"</div>
                         </div>
                         <div class="quick-actions">
-                            <button class="quick-btn">⏸️ Pause</button>
-                            <button class="quick-btn">🔁 Replay</button>
-                            <button class="quick-btn">⚙️ Speed</button>
+                            <button class="quick-btn" onclick="pauseAvatar()">⏸️ Pause</button>
+                            <button class="quick-btn" onclick="replayAvatar()">🔁 Replay</button>
+                            <button class="quick-btn" onclick="adjustSpeed()">⚙️ Speed</button>
                         </div>
                         <div style="text-align: center; margin-top: 18px;">
                             <button class="btn btn-primary" style="width: 100%;" onclick="showScreen('translate')">✋ Sign Your Reply</button>
@@ -924,7 +960,8 @@
                 <!-- Call Interface Screen -->
                 <div id="call-screen" class="screen-view" style="display: none;">
                     <div class="call-interface">
-                        <div class="call-header" style="padding: 25px 20px;">
+                        <div class="call-header" style="padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                            <button class="btn-back" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;" onclick="showScreen('home')">←</button>
                             <div class="caller-name" style="font-size: 1.5em; margin-bottom: 8px;">📞 Dr. Rahman</div>
                             <div class="call-status" style="font-size: 0.95em;">Connected • 02:34</div>
                         </div>
@@ -952,7 +989,7 @@
                         </div>
                         <div class="call-controls" style="padding: 25px; background: white; min-height: 110px;">
                             <button class="call-btn call-btn-mute" style="width: 65px; height: 65px; background: #e5e7eb; color: #667eea;">🔇</button>
-                            <button class="call-btn call-btn-end" onclick="showScreen('home')" style="width: 65px; height: 65px;">📞</button>
+                            <button class="call-btn call-btn-end" style="width: 65px; height: 65px;" onclick="showScreen('home')">📞</button>
                             <button class="call-btn call-btn-mute" style="width: 65px; height: 65px; background: #e5e7eb; color: #667eea;">💬</button>
                         </div>
                     </div>
@@ -1002,9 +1039,9 @@
                             </div>
                         </div>
                         <div class="chat-input">
-                            <button class="send-btn" style="border-radius: 14px; width: 48px;">✋</button>
-                            <input type="text" class="input-field" placeholder="Type or sign your message...">
-                            <button class="send-btn">➤</button>
+                            <button class="send-btn" onclick="startSigning()" style="border-radius: 14px; width: 48px;">✋</button>
+                            <input type="text" class="input-field" id="chat-input-field" placeholder="Type or sign your message..." onkeypress="handleChatKeyPress(event)">
+                            <button class="send-btn" onclick="sendMessage()">➤</button>
                         </div>
                     </div>
                 </div>
@@ -1015,12 +1052,9 @@
                         <span>9:46</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="app-header" style="position: relative;">
-                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
-                        <div class="logo">
-                            <div class="hand-icon">⚙️</div>
-                            <span>Settings</span>
-                        </div>
+                    <div class="app-header" style="padding: 20px; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 15px; margin: 0; padding: 8px 16px;">←</button>
+                        <div style="font-size: 1.3em; font-weight: bold;">Settings</div>
                     </div>
                     <div class="content" style="padding: 0;">
                         <div class="settings-list">
@@ -1089,10 +1123,10 @@
                                     <div class="setting-icon">🎨</div>
                                     <div class="setting-text">
                                         <div class="setting-title">High Contrast</div>
-                                        <div class="setting-desc">Better visibility</div>
+                                        <div class="setting-desc" id="contrast-status">Currently off</div>
                                     </div>
                                 </div>
-                                <div class="toggle-switch"></div>
+                                <div class="toggle-switch" id="contrast-toggle" onclick="toggleContrast()"></div>
                             </div>
                             <div class="setting-item">
                                 <div class="setting-left">
@@ -1147,27 +1181,25 @@
     </div>
 
     <script>
+        // Screen Navigation
         function showScreen(screenName) {
-            // Hide all screens
             const screens = document.querySelectorAll('.screen-view');
             screens.forEach(screen => {
                 screen.style.display = 'none';
             });
 
-            // Show selected screen with animation
             const targetScreen = document.getElementById(screenName + '-screen');
             if (targetScreen) {
                 targetScreen.style.display = 'block';
                 targetScreen.classList.add('screen-transition');
                 
-                // Remove animation class after animation completes
                 setTimeout(() => {
                     targetScreen.classList.remove('screen-transition');
                 }, 400);
             }
         }
 
-        // Toggle Offline Mode
+        // Settings - Toggle Offline Mode
         function toggleOfflineMode() {
             const toggle = document.getElementById('offline-toggle');
             const status = document.getElementById('offline-status');
@@ -1184,10 +1216,24 @@
             }
         }
 
-        // Toggle Vibration
+        // Settings - Toggle Vibration
         function toggleVibration() {
             const toggle = document.getElementById('vibration-toggle');
             const status = document.getElementById('vibration-status');
+            
+            toggle.classList.toggle('active');
+            
+            if (toggle.classList.contains('active')) {
+                status.textContent = 'Currently on';
+            } else {
+                status.textContent = 'Currently off';
+            }
+        }
+
+        // Settings - Toggle High Contrast
+        function toggleContrast() {
+            const toggle = document.getElementById('contrast-toggle');
+            const status = document.getElementById('contrast-status');
             
             toggle.classList.toggle('active');
             
@@ -1208,10 +1254,8 @@
         }
 
         function selectRegion(region) {
-            // Update display
             document.getElementById('region-display').textContent = region;
             
-            // Update selected state in modal
             const items = document.querySelectorAll('.modal-item');
             items.forEach(item => {
                 item.classList.remove('selected');
@@ -1219,6 +1263,114 @@
                     item.classList.add('selected');
                 }
             });
+        }
+
+        // Chat Functionality
+        function sendMessage() {
+            const input = document.getElementById('chat-input-field');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesContainer = document.querySelector('.chat-messages');
+                
+                // Create new message bubble
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message message-sent';
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div>${message}</div>
+                        <div class="message-avatar-note">✨ Sent as sign avatar</div>
+                    </div>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                input.value = '';
+                
+                // Simulate response after 2 seconds
+                setTimeout(() => {
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = 'message message-received';
+                    responseDiv.innerHTML = `
+                        <div class="message-bubble">
+                            <div>Got it! Thanks for letting me know.</div>
+                            <div style="font-size: 0.9em; opacity: 0.85; margin-top: 4px;">বুঝলাম! জানানোর জন্য ধন্যবাদ।</div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(responseDiv);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 2000);
+            }
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function startSigning() {
+            alert('📹 Camera activated for sign language input!\n\nSign your message and it will be translated to text.');
+        }
+
+        // Translate Screen Functions
+        function speakTranslation() {
+            alert('🔊 Speaking: "I need help"\n\nআমার সাহায্য দরকার');
+            // Show avatar screen after speaking
+            setTimeout(() => {
+                showScreen('avatar');
+            }, 500);
+        }
+
+        function copyTranslation() {
+            alert('📋 Copied to clipboard:\n"I need help"\n\nআমার সাহায্য দরকার');
+        }
+
+        // Avatar Screen Functions
+        function pauseAvatar() {
+            alert('⏸️ Avatar animation paused');
+        }
+
+        function replayAvatar() {
+            alert('🔁 Replaying avatar animation...');
+        }
+
+        function adjustSpeed() {
+            const speed = prompt('⚙️ Set avatar speed:\n\n1. Slow (0.5x)\n2. Normal (1x)\n3. Fast (1.5x)\n\nEnter 1, 2, or 3:', '2');
+            if (speed) {
+                const speeds = {'1': 'Slow', '2': 'Normal', '3': 'Fast'};
+                alert(`Speed set to: ${speeds[speed] || 'Normal'}`);
+            }
+        }
+
+        // Call Screen Functions
+        function toggleMute(e) {
+            if (e) e.preventDefault();
+            const btn = e ? e.currentTarget : null;
+            if (btn && btn.textContent === '🔇') {
+                btn.textContent = '🔊';
+                alert('🔊 Microphone unmuted');
+            } else if (btn) {
+                btn.textContent = '🔇';
+                alert('🔇 Microphone muted');
+            }
+        }
+
+        function endCall(e) {
+            if (e) e.preventDefault();
+            const confirmed = confirm('📞 End call with Dr. Rahman?');
+            if (confirmed) {
+                showScreen('home');
+                setTimeout(() => {
+                    alert('Call ended');
+                }, 300);
+            }
+        }
+
+        function openChatFromCall(e) {
+            if (e) e.preventDefault();
+            alert('💬 Opening chat during call...\n\nYou can send text messages while the call continues.');
         }
 
         // Close modal when clicking outside
