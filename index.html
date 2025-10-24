@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ishara - AI Sign Language App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .prototype-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .phone-frame {
+            width: 340px;
+            height: 680px;
+            background: #1a1a1a;
+            border-radius: 38px;
+            padding: 14px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 28px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .hand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .tagline {
+            font-size: 0.9em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 20px;
+            height: calc(100% - 160px);
+            overflow-y: auto;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 22px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .feature-card:active {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 6px;
+        }
+
+        .feature-desc {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        .camera-view {
+            background: #000;
+            height: 320px;
+            border-radius: 18px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            inset: 0;
+            border: 3px dashed #667eea;
+            border-radius: 18px;
+            margin: 25px;
+            animation: dashRotate 20s linear infinite;
+        }
+
+        @keyframes dashRotate {
+            0% { border-color: #667eea; }
+            50% { border-color: #764ba2; }
+            100% { border-color: #667eea; }
+        }
+
+        .signing-hand {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #f4c2a1, #e8a87c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            animation: signPulse 2s infinite;
+            box-shadow: 0 10px 30px rgba(244, 194, 161, 0.4);
+        }
+
+        @keyframes signPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .translation-box {
+            background: linear-gradient(135deg, #f3f4ff, #e8ebff);
+            border: 2px solid #667eea;
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .translation-label {
+            color: #764ba2;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .translation-text {
+            color: #1a1a1a;
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .translation-bangla {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateX(-2px);
+        }
+
+        .btn-back:active {
+            transform: scale(0.95);
+        }
+
+        .avatar-container {
+            background: linear-gradient(135deg, #f3f4ff, #e8ebff);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 22px;
+            border: 2px solid #667eea;
+        }
+
+        .avatar-circle {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: avatarFloat 3s infinite;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .avatar-hand {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #f4c2a1, #e8a87c);
+            border-radius: 45px 45px 35px 35px;
+            animation: avatarSign 2s infinite;
+        }
+
+        @keyframes avatarSign {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg); }
+        }
+
+        .avatar-text {
+            color: #764ba2;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .call-interface {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .call-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 20px;
+            text-align: center;
+            position: relative;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .caller-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .call-status {
+            font-size: 0.8em;
+            opacity: 0.95;
+        }
+
+        .split-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .view-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-user {
+            background: #000;
+        }
+
+        .view-avatar {
+            background: linear-gradient(135deg, #f3f4ff, #e8ebff);
+        }
+
+        .view-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .live-caption {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            line-height: 1.4;
+        }
+
+        .call-controls {
+            padding: 18px 25px;
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            background: white;
+            min-height: 90px;
+            align-items: center;
+        }
+
+        .call-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .call-btn-end {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .call-btn-mute {
+            background: #f3f4f6;
+            color: #667eea;
+        }
+
+        .settings-list {
+            padding: 10px 0;
+        }
+
+        .setting-item {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .setting-item:hover {
+            background: #f9fafb;
+        }
+
+        .setting-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .setting-icon {
+            font-size: 1.4em;
+        }
+
+        .setting-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 3px;
+            font-size: 1em;
+        }
+
+        .setting-desc {
+            font-size: 0.8em;
+            color: #6b7280;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: #d1d5db;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            left: 25px;
+        }
+
+        .chat-interface {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            background: #f9fafb;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-received {
+            justify-content: flex-start;
+        }
+
+        .message-sent {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 14px 16px;
+            border-radius: 20px;
+        }
+
+        .message-received .message-bubble {
+            background: white;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .message-sent .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+
+        .message-avatar-note {
+            font-size: 0.75em;
+            opacity: 0.85;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .chat-input {
+            padding: 18px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 0.95em;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .quick-btn {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 18px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .offline-banner {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: #ef4444;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 18px;
+            font-size: 0.8em;
+            font-weight: bold;
+            animation: recordBlink 1.5s infinite;
+        }
+
+        @keyframes recordBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .confidence-bar {
+            height: 5px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 92%;
+            animation: fillBar 1s ease;
+        }
+
+        @keyframes fillBar {
+            from { width: 0%; }
+            to { width: 92%; }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 300px;
+            max-height: 500px;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .modal-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .modal-item:hover {
+            background: #f3f4ff;
+        }
+
+        .modal-item.selected {
+            background: linear-gradient(135deg, #f3f4ff, #e8ebff);
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            padding: 16px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .modal-close-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .instructions {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            max-width: 340px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .instructions p {
+            font-size: 0.9em;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .screen-transition {
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-container">
+        <div class="phone-frame">
+            <div class="screen" id="app-screen">
+                <!-- Home Screen (Default) -->
+                <div id="home-screen" class="screen-view">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="app-header">
+                        <div class="logo">
+                            <div class="hand-icon">👋</div>
+                            <span>Ishara</span>
+                        </div>
+                        <div class="tagline">Your Voice in Sign Language</div>
+                    </div>
+                    <div class="content">
+                        <div class="offline-banner">
+                            ⚡ Offline Mode Active
+                        </div>
+                        <div class="home-grid">
+                            <div class="feature-card" onclick="showScreen('call')">
+                                <div class="feature-icon">📞</div>
+                                <div class="feature-title">Call</div>
+                                <div class="feature-desc">Make AI-assisted calls</div>
+                            </div>
+                            <div class="feature-card" onclick="showScreen('chat')">
+                                <div class="feature-icon">💬</div>
+                                <div class="feature-title">Chat</div>
+                                <div class="feature-desc">Text with sign translation</div>
+                            </div>
+                            <div class="feature-card" onclick="showScreen('translate')">
+                                <div class="feature-icon">🔄</div>
+                                <div class="feature-title">Translate</div>
+                                <div class="feature-desc">Real-time BdSL conversion</div>
+                            </div>
+                            <div class="feature-card" onclick="showScreen('settings')">
+                                <div class="feature-icon">⚙️</div>
+                                <div class="feature-title">Settings</div>
+                                <div class="feature-desc">Customize your app</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 25px; text-align: center; color: #6b7280; font-size: 0.9em;">
+                            <p>✨ Tap any feature to explore</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Translate Screen -->
+                <div id="translate-screen" class="screen-view" style="display: none;">
+                    <div class="status-bar">
+                        <span>9:42</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="app-header" style="position: relative;">
+                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
+                        <div class="logo">
+                            <div class="hand-icon">🔄</div>
+                            <span>Translate</span>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="camera-view">
+                            <div class="camera-overlay"></div>
+                            <div class="signing-hand">✋</div>
+                            <div class="recording-indicator">● Recording</div>
+                            <div class="view-label">Sign within frame</div>
+                        </div>
+                        <div class="translation-box">
+                            <div class="translation-label">🤖 AI Detected</div>
+                            <div class="translation-text">"I need help"</div>
+                            <div class="translation-bangla">"আমার সাহায্য দরকার"</div>
+                            <div style="font-size: 0.8em; color: #6b7280;">Confidence: 92%</div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill"></div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" onclick="showScreen('avatar')">🔊 Speak</button>
+                                <button class="btn btn-secondary">📋 Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avatar Response Screen -->
+                <div id="avatar-screen" class="screen-view" style="display: none;">
+                    <div class="status-bar">
+                        <span>9:42</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="app-header" style="position: relative;">
+                        <button class="btn-back" onclick="showScreen('translate')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
+                        <div class="logo">
+                            <div class="hand-icon">🎭</div>
+                            <span>Avatar Reply</span>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="avatar-container">
+                            <div class="avatar-circle">
+                                <div class="avatar-hand"></div>
+                            </div>
+                            <div class="avatar-text">🎭 Signing: "How can I help you?"</div>
+                        </div>
+                        <div class="translation-box">
+                            <div class="translation-label">Response</div>
+                            <div class="translation-text">"How can I help you?"</div>
+                            <div class="translation-bangla">"আমি কিভাবে আপনাকে সাহায্য করতে পারি?"</div>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-btn">⏸️ Pause</button>
+                            <button class="quick-btn">🔁 Replay</button>
+                            <button class="quick-btn">⚙️ Speed</button>
+                        </div>
+                        <div style="text-align: center; margin-top: 18px;">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="showScreen('translate')">✋ Sign Your Reply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call Interface Screen -->
+                <div id="call-screen" class="screen-view" style="display: none;">
+                    <div class="call-interface">
+                        <div class="call-header" style="padding: 25px 20px;">
+                            <div class="caller-name" style="font-size: 1.5em; margin-bottom: 8px;">📞 Dr. Rahman</div>
+                            <div class="call-status" style="font-size: 0.95em;">Connected • 02:34</div>
+                        </div>
+                        <div class="split-view">
+                            <div class="view-section view-user" style="background: #000;">
+                                <div class="view-label" style="background: rgba(255,255,255,0.2); color: white; font-size: 0.85em; padding: 6px 14px; top: 15px; left: 15px;">You (Signing)</div>
+                                <div style="width: 180px; height: 180px; background: linear-gradient(135deg, #f4c2a1, #e8a87c); border-radius: 50%; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; margin-bottom: 15px;">
+                                    <div style="font-size: 6em; margin-bottom: -20px;">✋</div>
+                                </div>
+                                <div class="live-caption" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 12px 16px; font-size: 0.85em; line-height: 1.5; max-width: 90%; margin: 0 auto;">
+                                    <div style="margin-bottom: 5px;">💬 "I have fever and headache"</div>
+                                    <div style="opacity: 0.9;">"আমার জ্বর এবং মাথাব্যথা আছে"</div>
+                                </div>
+                            </div>
+                            <div class="view-section view-avatar" style="background: linear-gradient(135deg, #e8ebff, #f3f4ff);">
+                                <div class="view-label" style="background: linear-gradient(135deg, #667eea, #764ba2); font-size: 0.85em; padding: 6px 14px; top: 15px; left: 15px; border-radius: 20px;">Doctor's Reply (Avatar)</div>
+                                <div style="width: 180px; height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 6px solid rgba(102, 126, 234, 0.3);">
+                                    <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #f4c2a1, #e8a87c); border-radius: 50%; position: relative; animation: avatarSign 2s infinite;"></div>
+                                </div>
+                                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.85em; line-height: 1.5; max-width: 90%; margin: 0 auto;">
+                                    <div style="margin-bottom: 5px;">🎭 "Take rest and drink water"</div>
+                                    <div style="opacity: 0.95;">"বিশ্রাম নিন এবং পানি পান করুন"</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="call-controls" style="padding: 25px; background: white; min-height: 110px;">
+                            <button class="call-btn call-btn-mute" style="width: 65px; height: 65px; background: #e5e7eb; color: #667eea;">🔇</button>
+                            <button class="call-btn call-btn-end" onclick="showScreen('home')" style="width: 65px; height: 65px;">📞</button>
+                            <button class="call-btn call-btn-mute" style="width: 65px; height: 65px; background: #e5e7eb; color: #667eea;">💬</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Interface Screen -->
+                <div id="chat-screen" class="screen-view" style="display: none;">
+                    <div class="chat-interface">
+                        <div class="status-bar">
+                            <span>9:45</span>
+                            <span>📶 🔋</span>
+                        </div>
+                        <div class="call-header" style="padding: 18px 22px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <button class="btn-back" onclick="showScreen('home')" style="margin: 0; padding: 8px 15px;">←</button>
+                                <span style="font-size: 1.6em;">👤</span>
+                                <div style="text-align: left; flex: 1;">
+                                    <div style="font-weight: bold; font-size: 1.15em;">Fatima</div>
+                                    <div style="font-size: 0.85em; opacity: 0.95;">Online</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-messages">
+                            <div class="message message-received">
+                                <div class="message-bubble">
+                                    <div>Hello! How are you?</div>
+                                    <div style="font-size: 0.9em; opacity: 0.85; margin-top: 4px;">হ্যালো! আপনি কেমন আছেন?</div>
+                                </div>
+                            </div>
+                            <div class="message message-sent">
+                                <div class="message-bubble">
+                                    <div>I'm good, thanks!</div>
+                                    <div class="message-avatar-note">✨ Sent as sign avatar</div>
+                                </div>
+                            </div>
+                            <div class="message message-received">
+                                <div class="message-bubble">
+                                    <div>Want to meet tomorrow?</div>
+                                    <div style="font-size: 0.9em; opacity: 0.85; margin-top: 4px;">কাল দেখা করবেন?</div>
+                                </div>
+                            </div>
+                            <div class="message message-sent">
+                                <div class="message-bubble">
+                                    <div>Yes! What time?</div>
+                                    <div class="message-avatar-note">✨ Sent as sign avatar</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <button class="send-btn" style="border-radius: 14px; width: 48px;">✋</button>
+                            <input type="text" class="input-field" placeholder="Type or sign your message...">
+                            <button class="send-btn">➤</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Screen -->
+                <div id="settings-screen" class="screen-view" style="display: none;">
+                    <div class="status-bar">
+                        <span>9:46</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="app-header" style="position: relative;">
+                        <button class="btn-back" onclick="showScreen('home')" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0; padding: 8px 16px;">← Back</button>
+                        <div class="logo">
+                            <div class="hand-icon">⚙️</div>
+                            <span>Settings</span>
+                        </div>
+                    </div>
+                    <div class="content" style="padding: 0;">
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🌐</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Offline Mode</div>
+                                        <div class="setting-desc" id="offline-status">Currently offline</div>
+                                    </div>
+                                </div>
+                                <div class="toggle-switch active" id="offline-toggle" onclick="toggleOfflineMode()"></div>
+                            </div>
+                            <div class="setting-item" onclick="showRegionModal()">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🗺️</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Region</div>
+                                        <div class="setting-desc" id="region-display">Dhaka</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🌍</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Language</div>
+                                        <div class="setting-desc">Bangla Sign Language</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🎭</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Avatar Style</div>
+                                        <div class="setting-desc">Customize avatar appearance</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">⚡</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Speed</div>
+                                        <div class="setting-desc">Avatar signing speed</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🔔</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Vibration Alerts</div>
+                                        <div class="setting-desc" id="vibration-status">Currently on</div>
+                                    </div>
+                                </div>
+                                <div class="toggle-switch active" id="vibration-toggle" onclick="toggleVibration()"></div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">🎨</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">High Contrast</div>
+                                        <div class="setting-desc">Better visibility</div>
+                                    </div>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">💾</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Data Usage</div>
+                                        <div class="setting-desc">Low bandwidth mode</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-left">
+                                    <div class="setting-icon">❓</div>
+                                    <div class="setting-text">
+                                        <div class="setting-title">Help & Tutorial</div>
+                                        <div class="setting-desc">Learn how to use Ishara</div>
+                                    </div>
+                                </div>
+                                <span style="color: #667eea; font-size: 1.2em;">›</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>📱 Interactive Prototype</h3>
+            <p>Tap the feature cards to navigate through different screens. Experience the organic flow of the Ishara app.</p>
+        </div>
+    </div>
+
+    <!-- Region Selection Modal -->
+    <div id="region-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">Select Your Region</div>
+            <div class="modal-list">
+                <div class="modal-item selected" onclick="selectRegion('Dhaka')">Dhaka</div>
+                <div class="modal-item" onclick="selectRegion('Chittagong')">Chittagong</div>
+                <div class="modal-item" onclick="selectRegion('Rajshahi')">Rajshahi</div>
+                <div class="modal-item" onclick="selectRegion('Khulna')">Khulna</div>
+                <div class="modal-item" onclick="selectRegion('Barisal')">Barisal</div>
+                <div class="modal-item" onclick="selectRegion('Sylhet')">Sylhet</div>
+                <div class="modal-item" onclick="selectRegion('Rangpur')">Rangpur</div>
+                <div class="modal-item" onclick="selectRegion('Mymensingh')">Mymensingh</div>
+            </div>
+            <div class="modal-close">
+                <button class="modal-close-btn" onclick="closeRegionModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showScreen(screenName) {
+            // Hide all screens
+            const screens = document.querySelectorAll('.screen-view');
+            screens.forEach(screen => {
+                screen.style.display = 'none';
+            });
+
+            // Show selected screen with animation
+            const targetScreen = document.getElementById(screenName + '-screen');
+            if (targetScreen) {
+                targetScreen.style.display = 'block';
+                targetScreen.classList.add('screen-transition');
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    targetScreen.classList.remove('screen-transition');
+                }, 400);
+            }
+        }
+
+        // Toggle Offline Mode
+        function toggleOfflineMode() {
+            const toggle = document.getElementById('offline-toggle');
+            const status = document.getElementById('offline-status');
+            const banner = document.querySelector('.offline-banner');
+            
+            toggle.classList.toggle('active');
+            
+            if (toggle.classList.contains('active')) {
+                status.textContent = 'Currently offline';
+                if (banner) banner.style.display = 'flex';
+            } else {
+                status.textContent = 'Currently online';
+                if (banner) banner.style.display = 'none';
+            }
+        }
+
+        // Toggle Vibration
+        function toggleVibration() {
+            const toggle = document.getElementById('vibration-toggle');
+            const status = document.getElementById('vibration-status');
+            
+            toggle.classList.toggle('active');
+            
+            if (toggle.classList.contains('active')) {
+                status.textContent = 'Currently on';
+            } else {
+                status.textContent = 'Currently off';
+            }
+        }
+
+        // Region Selection
+        function showRegionModal() {
+            document.getElementById('region-modal').style.display = 'flex';
+        }
+
+        function closeRegionModal() {
+            document.getElementById('region-modal').style.display = 'none';
+        }
+
+        function selectRegion(region) {
+            // Update display
+            document.getElementById('region-display').textContent = region;
+            
+            // Update selected state in modal
+            const items = document.querySelectorAll('.modal-item');
+            items.forEach(item => {
+                item.classList.remove('selected');
+                if (item.textContent === region) {
+                    item.classList.add('selected');
+                }
+            });
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('region-modal');
+            if (e.target === modal) {
+                closeRegionModal();
+            }
+        });
+
+        // Add click feedback to feature cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
