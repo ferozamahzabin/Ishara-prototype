@@ -13,52 +13,53 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .prototype-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .phone-frame {
-            width: 340px;
-            height: 680px;
-            background: #1a1a1a;
-            border-radius: 38px;
-            padding: 14px;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
-            position: relative;
+            background: white;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
         }
 
-        .phone-frame::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 28px;
-            background: #1a1a1a;
-            border-radius: 0 0 20px 20px;
-            z-index: 10;
+        .prototype-container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: white;
+            margin: 0;
+            padding: 0;
+            box-shadow: none;
+            position: relative;
+            overflow: hidden;
         }
 
         .screen {
             width: 100%;
             height: 100%;
             background: white;
-            border-radius: 28px;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .screen::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .screen::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .screen::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 2px;
         }
 
         .status-bar {
@@ -108,22 +109,12 @@
 
         .content {
             padding: 20px;
-            height: calc(100% - 160px);
-            overflow-y: auto;
+            min-height: calc(100vh - 160px);
             -webkit-overflow-scrolling: touch;
         }
 
         .content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .content::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .content::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.3);
-            border-radius: 2px;
+            display: none;
         }
 
         .home-grid {
@@ -811,25 +802,105 @@
         }
 
         .instructions {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            color: white;
-            max-width: 340px;
-            margin-top: 20px;
-            text-align: center;
+            display: none;
         }
 
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #fff;
+        @keyframes waveHand {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            25% { transform: rotate(-15deg) translateY(-5px); }
+            50% { transform: rotate(15deg) translateY(-8px); }
+            75% { transform: rotate(-10deg) translateY(-5px); }
         }
 
-        .instructions p {
-            font-size: 0.9em;
-            opacity: 0.95;
-            line-height: 1.6;
+        .animated-hand {
+            width: 100px;
+            height: 120px;
+            position: relative;
+            animation: waveHand 2s ease-in-out infinite;
+        }
+
+        .hand-palm {
+            width: 70px;
+            height: 90px;
+            background: linear-gradient(135deg, #f4c2a1, #e8a87c);
+            border-radius: 35px 35px 28px 28px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .hand-fingers {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+        }
+
+        .hand-finger {
+            width: 12px;
+            height: 40px;
+            background: linear-gradient(135deg, #f4c2a1, #e8a87c);
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .hand-finger:nth-child(1) { 
+            height: 35px; 
+            animation: fingerWiggle1 2s ease-in-out infinite;
+        }
+        .hand-finger:nth-child(2) { 
+            height: 42px;
+            animation: fingerWiggle2 2s ease-in-out infinite 0.1s;
+        }
+        .hand-finger:nth-child(3) { 
+            height: 40px;
+            animation: fingerWiggle3 2s ease-in-out infinite 0.2s;
+        }
+        .hand-finger:nth-child(4) { 
+            height: 33px;
+            animation: fingerWiggle4 2s ease-in-out infinite 0.3s;
+        }
+
+        .hand-thumb {
+            width: 18px;
+            height: 45px;
+            background: linear-gradient(135deg, #f4c2a1, #e8a87c);
+            border-radius: 9px;
+            position: absolute;
+            top: 25px;
+            left: -5px;
+            transform: rotate(-25deg);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            animation: thumbWave 2s ease-in-out infinite;
+        }
+
+        @keyframes fingerWiggle1 {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-8deg); }
+        }
+
+        @keyframes fingerWiggle2 {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-5deg); }
+        }
+
+        @keyframes fingerWiggle3 {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        @keyframes fingerWiggle4 {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(8deg); }
+        }
+
+        @keyframes thumbWave {
+            0%, 100% { transform: rotate(-25deg); }
+            50% { transform: rotate(-35deg); }
         }
 
         .screen-transition {
@@ -851,7 +922,11 @@
                     <div class="status-bar">
                         <span>9:41</span>
                         <span>📶 🔋</span>
-                    </div>
+                        <div class="instructions">
+            <h3>📱 Interactive Prototype</h3>
+            <p>Tap the feature cards to navigate through different screens. Experience the organic flow of the Ishara app.</p>
+        </div>
+    </div>
                     <div class="app-header">
                         <div class="logo">
                             <div class="hand-icon">👋</div>
@@ -979,7 +1054,17 @@
                             <div class="view-section view-avatar" style="background: linear-gradient(135deg, #e8ebff, #f3f4ff);">
                                 <div class="view-label" style="background: linear-gradient(135deg, #667eea, #764ba2); font-size: 0.85em; padding: 6px 14px; top: 15px; left: 15px; border-radius: 20px;">Doctor's Reply (Avatar)</div>
                                 <div style="width: 180px; height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 6px solid rgba(102, 126, 234, 0.3);">
-                                    <div style="width: 90px; height: 90px; background: linear-gradient(135deg, #f4c2a1, #e8a87c); border-radius: 50%; position: relative; animation: avatarSign 2s infinite;"></div>
+                                    <div class="animated-hand">
+                                        <div class="hand-palm">
+                                            <div class="hand-thumb"></div>
+                                        </div>
+                                        <div class="hand-fingers">
+                                            <div class="hand-finger"></div>
+                                            <div class="hand-finger"></div>
+                                            <div class="hand-finger"></div>
+                                            <div class="hand-finger"></div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 16px; border-radius: 20px; font-size: 0.85em; line-height: 1.5; max-width: 90%; margin: 0 auto;">
                                     <div style="margin-bottom: 5px;">🎭 "Take rest and drink water"</div>
